@@ -8,10 +8,27 @@ import { MdOutlineQuestionAnswer } from "react-icons/md";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
+
+ interface FaqCategory {
+  _id: string;
+  faqCategoryName: string;
+}
+
+ interface FaqItem {
+  _id: string;
+  faqQuestion: string;
+  faqAnswer: string;
+  faqSlug: string;
+  faqCategoryName?: {
+    faqCategoryName: string;
+  };
+  categoryName: string; // <-- add this line
+}
+
 export default function FaqPage() {
-  const [allFaq, setAllFaq] = useState([]);
-  const [allFaqCategory, setAllFaqCategory] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+ const [allFaq, setAllFaq] = useState<FaqItem[]>([]);
+const [allFaqCategory, setAllFaqCategory] = useState<FaqCategory[]>([]);
+const [selectedCategory, setSelectedCategory] = useState<FaqCategory | null>(null);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const { data, isLoading: isFaqLoading } = useViewFaqQuery(undefined);
@@ -19,15 +36,15 @@ export default function FaqPage() {
     useViewFaqCategoryQuery(undefined);
 
   // Flatten and set FAQ data
-  useEffect(() => {
-    if (data?.data) {
-      const flatFaqs = data.data.map((item) => ({
-        ...item,
-        categoryName: item.faqCategoryName?.faqCategoryName || "Uncategorized",
-      }));
-      setAllFaq(flatFaqs);
-    }
-  }, [data]);
+useEffect(() => {
+  if (data?.data) {
+    const flatFaqs = (data.data as FaqItem[]).map((item) => ({
+      ...item,
+      categoryName: item.faqCategoryName?.faqCategoryName || "Uncategorized",
+    }));
+    setAllFaq(flatFaqs);
+  }
+}, [data]);
 
   useEffect(() => {
     if (faqCategoryData?.data) {
@@ -46,14 +63,14 @@ export default function FaqPage() {
   }
 
   // Group FAQs by category
-  const groupedFaqs = allFaq.reduce((acc, item) => {
-    const category = item.categoryName;
-    if (category) {
-      acc[category] = acc[category] || [];
-      acc[category].push(item);
-    }
-    return acc;
-  }, {});
+const groupedFaqs = allFaq.reduce((acc: Record<string, FaqItem[]>, item) => {
+  const category = item.categoryName;
+  if (category) {
+    acc[category] = acc[category] || [];
+    acc[category].push(item);
+  }
+  return acc;
+}, {});
 
   return (
     <div className="bg-white">
@@ -87,7 +104,9 @@ export default function FaqPage() {
               {selectedCategory?.faqCategoryName || "FAQ"}
             </h2>
 
-            {groupedFaqs[selectedCategory?.faqCategoryName]?.map(
+            {selectedCategory?.faqCategoryName &&
+            
+            groupedFaqs[selectedCategory?.faqCategoryName]?.map(
               (item, index) => (
                 <div key={item._id} className="border-b last:border-none py-3">
                   <button
