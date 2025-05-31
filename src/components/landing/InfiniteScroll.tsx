@@ -2,7 +2,8 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 
 const InfiniteScroll = () => {
-  const scrollContainerRef = useRef(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const scrollSpeed = 1; // Adjust this to control scrolling speed
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);

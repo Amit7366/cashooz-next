@@ -48,35 +48,44 @@ const textVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 const Hero = () => {
-  const heroRef = useRef(null);
-  const leftCardRef = useRef(null);
-  const rightCardRef = useRef(null);
+  const heroRef = useRef<HTMLDivElement>(null); // Proper typing
+  const leftCardRef = useRef<HTMLDivElement>(null);
+  const rightCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(heroRef.current.children, {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.2,
-        ease: "power2.out",
-      });
+      // Hero animation with null check
+      if (heroRef.current) {
+        gsap.from(heroRef.current.children, {
+          y: 50,
+          opacity: 0,
+          duration: 1,
+          stagger: 0.2,
+          ease: "power2.out",
+        });
+      }
 
-      gsap.from(leftCardRef.current, {
-        x: -100,
-        opacity: 0,
-        duration: 1,
-        ease: "power2.out",
-        delay: 1,
-      });
+      // Left card animation with null check
+      if (leftCardRef.current) {
+        gsap.from(leftCardRef.current, {
+          x: -100,
+          opacity: 0,
+          duration: 1,
+          ease: "power2.out",
+          delay: 1,
+        });
+      }
 
-      gsap.from(rightCardRef.current, {
-        x: 100,
-        opacity: 0,
-        duration: 1,
-        ease: "power2.out",
-        delay: 1.2,
-      });
+      // Right card animation with null check
+      if (rightCardRef.current) {
+        gsap.from(rightCardRef.current, {
+          x: 100,
+          opacity: 0,
+          duration: 1,
+          ease: "power2.out",
+          delay: 1.2,
+        });
+      }
     });
     return () => ctx.revert();
   }, []);

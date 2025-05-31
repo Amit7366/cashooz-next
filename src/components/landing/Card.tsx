@@ -1,6 +1,13 @@
 import React from "react";
 
-const Card = ({ image, title, description, price, rating }) => {
+interface CardProps {
+  image: string;
+  title: string;
+  description: string;
+  price: number;
+  rating: number;
+}
+const Card = ({ image, title, description, price, rating } : CardProps) => {
   return (
     <div className="bg-[#222339] p-4 rounded-lg shadow-lg w-40">
       <img
